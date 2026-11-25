@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ekspedisi Kemah di Hutan Lindung - Kelas 4 SD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(180deg, #dcfce7 0%, #bbf7d0 50%, #86efac 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+        }
+        
+        /* Animasi lembut untuk elemen ilustrasi */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .btn-bounce:active {
+            transform: scale(0.96);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0fdf4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4ade80;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col items-center justify-center p-3 sm:p-6">
+
+    <!-- Kontainer Utama Aplikasi -->
+    <main class="w-full max-w-3xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-emerald-500 overflow-hidden flex flex-col min-h-[85vh] sm:min-h-0">
+        
+        <!-- Header Status Bar (Muncul saat game berjalan) -->
+        <header id="stats-bar" class="hidden bg-emerald-700 text-white p-3 sm:p-4 shadow-md z-10">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
+                <!-- Info Nama Kelompok, Progress Babak & Waktu -->
+                <div class="flex flex-wrap items-center justify-center gap-2">
+                    <div class="flex items-center gap-1.5 bg-amber-500 text-amber-950 px-3 py-1 rounded-full text-xs sm:text-sm font-bold shadow-sm">
+                        <span>🚩</span>
+                        <span id="header-group-name" class="max-w-[120px] truncate">Regu Hebat</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-emerald-800 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
+                        <span>🏕️ Babak:</span>
+                        <span id="stage-indicator">1 / 8</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-emerald-900 px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-bold text-amber-300">
+                        <span>⏱️</span>
+                        <span id="timer-indicator">00:00</span>
+                    </div>
+                </div>
+
+                <!-- 3 Indikator Statistik -->
+                <div class="grid grid-cols-3 gap-2 sm:gap-4 w-full sm:w-auto flex-1">
+                    <!-- Energi -->
+                    <div class="bg-emerald-800/80 p-2 rounded-2xl border border-emerald-500/50">
+                        <div class="flex justify-between items-center text-xs sm:text-sm font-bold mb-1">
+                            <span>⚡ Energi</span>
+                            <span id="val-energi">100</span>
+                        </div>
+                        <div class="w-full bg-emerald-950 rounded-full h-2.5 sm:h-3 overflow-hidden">
+                            <div id="bar-energi" class="bg-amber-400 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Bekal -->
+                    <div class="bg-emerald-800/80 p-2 rounded-2xl border border-emerald-500/50">
+                        <div class="flex justify-between items-center text-xs sm:text-sm font-bold mb-1">
+                            <span>🎒 Bekal</span>
+                            <span id="val-bekal">100</span>
+                        </div>
+                        <div class="w-full bg-emerald-950 rounded-full h-2.5 sm:h-3 overflow-hidden">
+                            <div id="bar-bekal" class="bg-sky-400 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Kekompakan Tim -->
+                    <div class="bg-emerald-800/80 p-2 rounded-2xl border border-emerald-500/50">
+                        <div class="flex justify-between items-center text-xs sm:text-sm font-bold mb-1">
+                            <span>🤝 Kompak</span>
+                            <span id="val-kompak">100</span>
+                        </div>
+                        <div class="w-full bg-emerald-950 rounded-full h-2.5 sm:h-3 overflow-hidden">
+                            <div id="bar-kompak" class="bg-rose-400 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- LAYAR 1: HALAMAN AWAL (START SCREEN) -->
+        <section id="screen-start" class="flex-1 flex flex-col items-center justify-center text-center p-5 sm:p-8">
+            <div class="text-6xl sm:text-7xl mb-3 animate-float">🏕️🌲🦌</div>
+            <span class="bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-bold px-4 py-1 rounded-full border border-emerald-300 mb-2">
+                GAME EDUKASI • KELAS 4 SD
+            </span>
+            <h1 class="text-2xl sm:text-4xl font-bold text-emerald-900 mb-2 leading-tight">
+                Ekspedisi Kemah di Hutan Lindung
+            </h1>
+            <p class="text-base sm:text-lg text-slate-600 max-w-xl mb-5 leading-relaxed">
+                Halo, Petualang Muda! Kamu dan regu pramuka akan berkemah di Hutan Lindung Nusantara. Setiap keputusanmu akan menentukan keselamatan tim, kelestarian alam, dan kekompakan regu!
+            </p>
+
+            <!-- Kotak Input Nama Kelompok / Regu -->
+            <div class="w-full max-w-md bg-emerald-50/90 border-2 border-emerald-300 rounded-3xl p-4 sm:p-5 mb-6 shadow-sm">
+                <label for="input-group-name" class="block text-left text-sm sm:text-base font-bold text-emerald-900 mb-2">
+                    🚩 Masukkan Nama Kelompok / Regu:
+                </label>
+                <input
+                    type="text"
+                    id="input-group-name"
+                    maxlength="25"
+                    placeholder="Contoh: Regu Elang / Kelompok 1"
+                    oninput="clearNameError()"
+                    onkeydown="if(event.key==='Enter') startGame()"
+                    class="w-full px-4 py-3 rounded-2xl border-2 border-emerald-400 focus:border-emerald-600 focus:outline-none text-base sm:text-lg font-bold text-slate-800 bg-white placeholder:font-normal placeholder:text-slate-400"
+                />
+                <p id="name-error-msg" class="hidden text-left text-rose-600 font-bold text-xs sm:text-sm mt-1.5">
+                    ⚠️ Yuk, isi nama kelompokmu dulu sebelum berangkat kemah!
+                </p>
+
+                <!-- Pilihan Cepat Nama Regu -->
+                <div class="flex flex-wrap items-center gap-1.5 mt-3">
+                    <span class="text-xs font-semibold text-emerald-800 mr-1">Pilih cepat:</span>
+                    <button type="button" onclick="setPresetGroup('Regu Elang')" class="text-xs bg-white hover:bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full border border-emerald-300 transition cursor-pointer">🦅 Elang</button>
+                    <button type="button" onclick="setPresetGroup('Regu Harimau')" class="text-xs bg-white hover:bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full border border-emerald-300 transition cursor-pointer">🐯 Harimau</button>
+                    <button type="button" onclick="setPresetGroup('Regu Melati')" class="text-xs bg-white hover:bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full border border-emerald-300 transition cursor-pointer">🌼 Melati</button>
+                    <button type="button" onclick="setPresetGroup('Regu Kancil')" class="text-xs bg-white hover:bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full border border-emerald-300 transition cursor-pointer">🦌 Kancil</button>
+                </div>
+            </div>
+
+            <!-- Info 3 Status -->
+            <div class="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-md mb-8 text-sm sm:text-base">
+                <div class="bg-amber-50 border-2 border-amber-200 p-3 rounded-2xl">
+                    <div class="text-2xl mb-1">⚡</div>
+                    <div class="font-bold text-amber-800">Energi</div>
+                    <div class="text-xs text-slate-500">Tenaga tubuh</div>
+                </div>
+                <div class="bg-sky-50 border-2 border-sky-200 p-3 rounded-2xl">
+                    <div class="text-2xl mb-1">🎒</div>
+                    <div class="font-bold text-sky-800">Bekal</div>
+                    <div class="text-xs text-slate-500">Makanan & alat</div>
+                </div>
+                <div class="bg-rose-50 border-2 border-rose-200 p-3 rounded-2xl">
+                    <div class="text-2xl mb-1">🤝</div>
+                    <div class="font-bold text-rose-800">Kompak</div>
+                    <div class="text-xs text-slate-500">Kerja sama tim</div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 w-full max-w-lg">
+                <button onclick="startGame()" class="btn-bounce flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-lg sm:text-xl py-4 px-6 rounded-2xl shadow-lg shadow-emerald-600/30 border-b-4 border-emerald-800 transition cursor-pointer">
+                    🚀 Mulai Petualangan!
+                </button>
+                <button onclick="openLeaderboardModal()" class="btn-bounce bg-sky-600 hover:bg-sky-500 text-white font-bold text-base sm:text-lg py-4 px-5 rounded-2xl shadow-lg shadow-sky-600/30 border-b-4 border-sky-800 transition cursor-pointer">
+                    🏆 Peringkat
+                </button>
+                <button onclick="openQuizModal()" class="btn-bounce bg-amber-500 hover:bg-amber-400 text-white font-bold text-base sm:text-lg py-4 px-5 rounded-2xl shadow-lg shadow-amber-500/30 border-b-4 border-amber-700 transition cursor-pointer">
+                    🕌 Kuis PAI
+                </button>
+            </div>
+        </section>
+
+        <!-- LAYAR 2: PERMAINAN UTAMA (GAMEPLAY SCREEN) -->
+        <section id="screen-game" class="hidden flex-1 flex flex-col justify-between p-4 sm:p-8">
+            <!-- Ilustrasi & Narasi Babak -->
+            <div>
+                <div class="flex flex-col items-center bg-gradient-to-b from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-3xl p-4 sm:p-6 mb-5 text-center relative">
+                    <div id="scene-emoji" class="text-6xl sm:text-7xl mb-3 animate-float">
+                        🥾🌲
+                    </div>
+                    <h2 id="scene-title" class="text-xl sm:text-2xl font-bold text-emerald-900 mb-2">
+                        Judul Babak
+                    </h2>
+                    <p id="scene-story" class="text-base sm:text-lg text-slate-700 leading-relaxed font-medium">
+                        Narasi cerita akan muncul di sini...
+                    </p>
+                </div>
+
+                <!-- Pilihan Jawaban A, B, C, D -->
+                <div id="choices-container" class="grid grid-cols-1 gap-3">
+                    <!-- Tombol pilihan akan diisi oleh JavaScript -->
+                </div>
+            </div>
+
+            <!-- Kotak Umpan Balik / Konsekuensi (Muncul setelah memilih) -->
+            <div id="feedback-box" class="hidden mt-4 bg-amber-50 border-3 border-amber-400 rounded-3xl p-4 sm:p-6 shadow-inner">
+                <div class="flex items-start gap-3 mb-3">
+                    <div id="feedback-icon" class="text-3xl sm:text-4xl">💡</div>
+                    <div>
+                        <h3 class="font-bold text-lg sm:text-xl text-amber-900 mb-1">Akibat Keputusanmu:</h3>
+                        <p id="feedback-text" class="text-base sm:text-lg text-slate-800 leading-relaxed mb-3">
+                            Penjelasan konsekuensi logis dan pesan moral...
+                        </p>
+                        <!-- Lencana Perubahan Status -->
+                        <div id="stat-changes" class="flex flex-wrap gap-2 text-sm font-bold">
+                            <!-- Badge efek status -->
+                        </div>
+                    </div>
+                </div>
+                <button id="btn-next" onclick="nextStage()" class="btn-bounce w-full mt-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-lg py-3.5 px-6 rounded-2xl shadow-md border-b-4 border-emerald-800 transition cursor-pointer">
+                    Lanjut ke Babak Berikutnya ➡️
+                </button>
+            </div>
+        </section>
+
+        <!-- LAYAR 3: GAME OVER (KALAH) -->
+        <section id="screen-gameover" class="hidden flex-1 flex flex-col items-center justify-center text-center p-6 sm:p-10">
+            <div class="text-7xl sm:text-8xl mb-4">⛺💦</div>
+            <span class="bg-rose-100 text-rose-800 text-sm font-bold px-4 py-1.5 rounded-full border border-rose-300 mb-2">
+                EKSPEDISI DIHENTIKAN SEMENTARA
+            </span>
+            <div id="gameover-group-badge" class="text-base sm:text-lg font-bold text-slate-700 mb-2">
+                🚩 Kelompok: -
+            </div>
+            <h2 id="gameover-title" class="text-2xl sm:text-3xl font-bold text-rose-700 mb-3">
+                Yah, Salah Satu Status Habis!
+            </h2>
+            <p id="gameover-reason" class="text-base sm:text-lg text-slate-700 max-w-lg mb-6 leading-relaxed">
+                Penjelasan alasan game over...
+            </p>
+            <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4 max-w-md mb-6 text-emerald-900 font-medium text-base">
+                🌟 <strong>Pesan Semangat:</strong> Jangan menyerah! Setiap penjelajah hebat pasti pernah belajar dari kesalahannya. Ayo atur strategi lebih bijak!
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3 w-full max-w-md justify-center">
+                <button onclick="restartSameGroup()" class="btn-bounce flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-lg py-4 px-6 rounded-2xl shadow-lg border-b-4 border-emerald-800 transition cursor-pointer">
+                    🔄 Coba Lagi
+                </button>
+                <button onclick="backToStart()" class="btn-bounce bg-slate-600 hover:bg-slate-500 text-white font-bold text-lg py-4 px-6 rounded-2xl shadow-lg border-b-4 border-slate-800 transition cursor-pointer">
+                    🏠 Ganti Regu
+                </button>
+            </div>
+        </section>
+
+        <!-- LAYAR 4: MENANG / HASIL AKHIR (VICTORY SCREEN) -->
+        <section id="screen-victory" class="hidden flex-1 flex flex-col items-center justify-center text-center p-5 sm:p-8">
+            <div id="victory-emoji" class="text-6xl sm:text-7xl mb-2 animate-float">🏆🌟</div>
+            <span class="bg-amber-100 text-amber-800 text-xs sm:text-sm font-bold px-4 py-1 rounded-full border border-amber-300 mb-2">
+                EKSPEDISI BERHASIL DISELESAIKAN!
+            </span>
+            <div id="victory-group-name" class="bg-emerald-100 text-emerald-900 border border-emerald-300 px-4 py-1 rounded-full font-bold text-base sm:text-lg mb-2">
+                🚩 Regu Juara
+            </div>
+            <h2 id="victory-rank" class="text-2xl sm:text-4xl font-bold text-emerald-800 mb-1">
+                Petualang Legendaris
+            </h2>
+            <p id="victory-desc" class="text-sm sm:text-base text-slate-600 max-w-lg mb-5 leading-relaxed">
+                Luar biasa! Kamu berhasil menjaga tim dan kelestarian hutan lindung hingga akhir perjalanan!
+            </p>
+
+            <!-- Ringkasan Skor & Waktu Akhir -->
+            <div class="bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 w-full max-w-lg mb-5">
+                <div class="text-xs font-bold text-slate-500 uppercase mb-2.5">Hasil Pencapaian Regu</div>
+                <div class="grid grid-cols-3 gap-2 mb-3">
+                    <div class="bg-amber-100/70 p-2 rounded-2xl">
+                        <div class="text-lg">⚡</div>
+                        <div class="font-bold text-amber-900 text-base sm:text-lg" id="end-energi">0</div>
+                        <div class="text-xs text-amber-700">Energi</div>
+                    </div>
+                    <div class="bg-sky-100/70 p-2 rounded-2xl">
+                        <div class="text-lg">🎒</div>
+                        <div class="font-bold text-sky-900 text-base sm:text-lg" id="end-bekal">0</div>
+                        <div class="text-xs text-sky-700">Bekal</div>
+                    </div>
+                    <div class="bg-rose-100/70 p-2 rounded-2xl">
+                        <div class="text-lg">🤝</div>
+                        <div class="font-bold text-rose-900 text-base sm:text-lg" id="end-kompak">0</div>
+                        <div class="text-xs text-rose-700">Kompak</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-emerald-600 text-white py-2.5 px-3 rounded-2xl font-bold text-base sm:text-lg">
+                        ⭐ Skor: <span id="end-total">0</span> / 300
+                    </div>
+                    <div class="bg-sky-600 text-white py-2.5 px-3 rounded-2xl font-bold text-base sm:text-lg">
+                        ⏱️ Waktu: <span id="end-time">00:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Papan Peringkat Kelompok Langsung di Layar Akhir -->
+            <div class="w-full max-w-lg bg-amber-50/80 border-2 border-amber-300 rounded-3xl p-4 mb-6 text-left">
+                <div class="flex justify-between items-center mb-2.5">
+                    <h3 class="font-bold text-base sm:text-lg text-amber-900 flex items-center gap-1.5">
+                        <span>🏆</span> Papan Peringkat Kelompok
+                    </h3>
+                    <span class="text-xs font-semibold text-amber-800 bg-amber-200/70 px-2.5 py-0.5 rounded-full">
+                        Skor Tertinggi & Tercepat
+                    </span>
+                </div>
+                <div id="victory-leaderboard-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- Daftar peringkat kelompok diisi otomatis oleh JS -->
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 w-full max-w-lg">
+                <button onclick="backToStart()" class="btn-bounce flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base sm:text-lg py-3.5 px-5 rounded-2xl shadow-lg border-b-4 border-emerald-800 transition cursor-pointer">
+                    🚩 Main Kelompok Berikutnya
+                </button>
+                <button onclick="openQuizModal()" class="btn-bounce bg-amber-500 hover:bg-amber-400 text-white font-bold text-base sm:text-lg py-3.5 px-5 rounded-2xl shadow-lg border-b-4 border-amber-700 transition cursor-pointer">
+                    🕌 Lanjut Kuis PAI
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL PAPAN PERINGKAT KELOMPOK -->
+    <div id="leaderboard-modal" class="hidden fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-6">
+        <div class="bg-white w-full max-w-xl rounded-3xl border-4 border-sky-500 shadow-2xl overflow-hidden flex flex-col max-h-[88vh]">
+            <div class="bg-sky-600 text-white p-4 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🏆</span>
+                    <div>
+                        <h3 class="font-bold text-lg sm:text-xl leading-tight">Hasil & Peringkat Kelompok</h3>
+                        <p class="text-xs text-sky-100">Urutan berdasarkan Nilai Tertinggi & Waktu Tercepat</p>
+                    </div>
+                </div>
+                <button onclick="closeLeaderboardModal()" class="bg-sky-800 hover:bg-sky-900 text-white font-bold px-3.5 py-1.5 rounded-xl text-sm cursor-pointer">
+                    ✖ Tutup
+                </button>
+            </div>
+
+            <div id="modal-leaderboard-list" class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-2.5 bg-slate-50">
+                <!-- Daftar peringkat akan dirender di sini -->
+            </div>
+
+            <div class="bg-white p-4 border-t border-slate-200 flex justify-between items-center gap-2">
+                <div id="reset-confirm-area">
+                    <button onclick="askResetLeaderboard()" class="text-rose-600 hover:text-rose-800 font-bold text-xs sm:text-sm px-3 py-2 rounded-xl hover:bg-rose-50 transition cursor-pointer">
+                        🗑️ Hapus Riwayat Nilai
+                    </button>
+                </div>
+                <button onclick="closeLeaderboardModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-5 rounded-xl shadow border-b-4 border-emerald-800 text-sm sm:text-base cursor-pointer">
+                    Selesai
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KUIS PAI SIRAH NABI (30 SOAL LENGKAP) -->
+    <div id="quiz-modal" class="hidden fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-6">
+        <div class="bg-white w-full max-w-2xl rounded-3xl border-4 border-amber-500 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <!-- Header Modal -->
+            <div class="bg-amber-500 text-white p-4 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🕌</span>
+                    <div>
+                        <h3 class="font-bold text-lg sm:text-xl leading-tight">Kuis PAI: Perjuangan Nabi Muhammad saw.</h3>
+                        <p class="text-xs sm:text-sm text-amber-100" id="quiz-progress-text">Soal 1 dari 30 • Skor: 0</p>
+                    </div>
+                </div>
+                <button onclick="closeQuizModal()" class="bg-amber-700 hover:bg-amber-800 text-white font-bold px-3.5 py-1.5 rounded-xl text-sm cursor-pointer">
+                    ✖ Tutup
+                </button>
+            </div>
+
+            <!-- Konten Kuis -->
+            <div id="quiz-body" class="p-5 sm:p-7 overflow-y-auto flex-1">
+                <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 sm:p-5 mb-5">
+                    <span class="inline-block bg-amber-200 text-amber-900 text-xs font-bold px-3 py-1 rounded-full mb-2" id="quiz-number-badge">Pertanyaan #1</span>
+                    <p id="quiz-question" class="text-lg sm:text-xl font-bold text-slate-800 leading-relaxed">
+                        Memuat soal...
+                    </p>
+                </div>
+
+                <div id="quiz-options" class="grid grid-cols-1 gap-3">
+                    <!-- Opsi jawaban PAI -->
+                </div>
+
+                <div id="quiz-feedback" class="hidden mt-4 p-4 rounded-2xl font-medium text-base">
+                    <!-- Umpan balik benar/salah -->
+                </div>
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-between items-center">
+                <button onclick="resetQuiz()" class="text-slate-500 hover:text-slate-700 font-bold text-sm px-3 py-2 cursor-pointer">
+                    🔄 Ulangi Kuis
+                </button>
+                <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-6 rounded-xl shadow border-b-4 border-emerald-800 cursor-pointer">
+                    Soal Berikutnya ➡️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // DATA CERITA: EKSPEDISI KEMAH HUTAN LINDUNG
+        // ==========================================
+        const gameStages = [
+            {
+                id: 1,
+                emoji: "🎒🥾🌲",
+                title: "Babak 1: Persiapan di Gerbang Hutan",
+                story: "Regu kita baru saja tiba di gerbang Hutan Lindung. Bima lupa membawa botol minum cadangan, sedangkan jalur pendakian hari ini cukup terik dan menanjak. Apa keputusanmu sebagai ketua regu?",
+                choices: [
+                    {
+                        label: "A",
+                        text: "Membagi air minum dari bekal bersama secara adil untuk Bima.",
+                        effects: { energi: 0, bekal: -15, kompak: +15 },
+                        feedback: "Saling berbagi membuat Bima tidak kehausan dan tim semakin kompak! Meski stok bekal berkurang sedikit, kebersamaan adalah kunci utama."
+                    },
+                    {
+                        label: "B",
+                        text: "Menyuruh Bima membeli air mahal di warung dekat gerbang pakai uang kas.",
+                        effects: { energi: 0, bekal: -20, kompak: +5 },
+                        feedback: "Bima mendapat air minum, namun uang bekal regu berkurang cukup banyak. Setidaknya semua anggota siap mendaki."
+                    },
+                    {
+                        label: "C",
+                        text: "Memarahi Bima di depan teman-teman dan menyuruhnya menahan haus.",
+                        effects: { energi: -15, bekal: 0, kompak: -25 },
+                        feedback: "Memarahi teman di depan umum membuat suasana regu menjadi sedih dan tidak kompak. Bima juga cepat kelelahan karena kurang minum."
+                    },
+                    {
+                        label: "D",
+                        text: "Mengajak regu beristirahat sebentar sambil mengisi ulang botol di pos penjaga hutan.",
+                        effects: { energi: +5, bekal: -5, kompak: +10 },
+                        feedback: "Ide cerdas! Petugas hutan dengan senang hati mengizinkan kita mengisi air bersih gratis. Hemat bekal dan tetap kompak!"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                emoji: "🧭🛤️🌿",
+                title: "Babak 2: Persimpangan Jalan Setapak",
+                story: "Di tengah hutan, kalian menemukan dua jalur. Jalur kiri tampak landai namun lebih jauh, sedangkan jalur kanan memotong jalan melewati semak belukar yang rapat tanpa papan petunjuk.",
+                choices: [
+                    {
+                        label: "A",
+                        text: "Memilih jalur kiri yang resmi dan aman meskipun memakan waktu lebih lama.",
+                        effects: { energi: -15, bekal: -5, kompak: +10 },
+                        feedback: "Keputusan yang bertanggung jawab! Mengikuti jalur resmi menjaga keselamatan seluruh anggota tim dan melindungi tumbuhan liar dari injakan."
+                    },
+                    {
+                        label: "B",
+                        text: "Menerobos semak belukar di jalur kanan agar cepat sampai.",
+                        effects: { energi: -20, bekal: -10, kompak: -15 },
+                        feedback: "Semak belukar berduri membuat baju tersangkut dan menguras tenaga! Selain itu, menerobos jalur terlarang bisa merusak tanaman langka."
+                    },
+                    {
+                        label: "C",
+                        text: "Bermusyawarah mengecek peta bersama sebelum melangkah di jalur resmi.",
+                        effects: { energi: -10, bekal: 0, kompak: +15 },
+                        feedback: "Musyawarah membuat semua anggota merasa dihargai dan yakin dengan arah perjalanan. Kalian berjalan dengan semangat!"
+                    },
+                    {
+                        label: "D",
+                        text: "Berpencar agar tahu jalur mana yang lebih cepat sampai ke lokasi kemah.",
+                        effects: { energi: -15, bekal: -10, kompak: -30 },
+                        feedback: "Berpencar di hutan sangat berbahaya! Tim sempat panik saling mencari sehingga kekompakan menurun drastis."
+                    }
+                ]
+            },
+            {
+                id: 3,
+                emoji: "🐒🍌🚫",
+                title: "Babak 3: Monyet Ekor Panjang di Jalur",
+                story: "Sekelompok monyet ekor panjang turun mendekati regu kalian karena mencium bau roti dari tas Sari. Di papan peringatan tertulis: 'Dilarang Memberi Makan Satwa Liar'.",
+                choices: [
+                    {
+                        label: "A",
+                        text: "Melemparkan roti agar monyet-monyet itu segera pergi.",
+                        effects: { energi: 0, bekal: -15, kompak: -10 },
+                        feedback: "Memberi makan satwa liar membuat mereka ketergantungan pada manusia dan bisa agresif. Kita harus mematuhi aturan hutan lindung."
+                    },
+                    {
+                        label: "B",
+                        text: "Menyimpan makanan rapat-rapat ke dalam tas dan berjalan tenang menjauh.",
+                        effects: { energi: -5, bekal: 0, kompak: +15 },
+                        feedback: "Hebat! Dengan bersikap tenang dan tidak memancing perhatian satwa, monyet-monyet itu pergi sendiri dengan damai."
+                    },
+                    {
+                        label: "C",
+                        text: "Berteriak keras dan mengayunkan ranting untuk mengusir monyet.",
+                        effects: { energi: -15, bekal: 0, kompak: -15 },
+                        feedback: "Tindakan kasar justru membuat satwa kaget dan ketakutan. Di hutan lindung, kita adalah tamu yang harus menghormati penghuninya."
+                    },
+                    {
+                        label: "D",
+                        text: "Berhenti sejenak untuk memotret dari jarak aman sambil menjaga barang bawaan.",
+                        effects: { energi: -5, bekal: -5, kompak: +5 },
+                        feedback: "Mengamati satwa dari jarak aman tanpa mengganggu adalah cara bijak menikmati keindahan alam!"
+                    }
+                ]
+            },
+            {
+                id: 4,
+                emoji: "🏞️💦🌉",
+                title: "Babak 4: Menyeberangi Sungai Berbatu",
+                story: "Kalian harus menyeberangi sungai dangkal dengan batu-batu yang licin berlumut. Raka terlihat ragu dan takut terpeleset karena tasnya cukup berat.",
+                choices: [
+                    {
+                        label: "A",
+                        text: "Membentuk rantai tangan dan membantu membawakan sebagian barang Raka.",
+                        effects: { energi: -10, bekal: 0, kompak: +20 },
+                        feedback: "Luar biasa! Kerja sama tim membuat Raka merasa aman dan percaya diri. Semua berhasil menyeberang tanpa ada yang basah!"
+                    },
+                    {
+                        label: "B",
+                        text: "Menyeberang duluan lalu memanggil Raka dari seberang sungai.",
+                        effects: { energi: -10, bekal: -10, kompak: -15 },
+                        feedback: "Karena gugup sendirian, Raka terpeleset sehingga sebagian bekalnya basah terkena air sungai."
+                    },
+                    {
+                        label: "C",
+                        text: "Mencari jembatan kayu kecil di bagian hulu meski harus memutar sedikit.",
+                        effects: { energi: -15, bekal: 0, kompak: +10 },
+                        feedback: "Mengutamakan keselamatan seluruh anggota regu adalah sikap pemimpin yang bijaksana."
+                    },
+                    {
+                        label: "D",
+                        text: "Menertawakan Raka agar ia tidak tegang saat melompati batu.",
+                        effects: { energi: -5, bekal: -5, kompak: -20 },
+                        feedback: "Menertawakan teman yang sedang takut justru melukai perasaannya. Sahabat sejati selalu memberi dukungan, bukan ejekan."
+                    }
+                ]
+            },
+            {
+                id: 5,
+                emoji: "⛺🔨🌬️",
+                title: "Babak 5: Mendirikan Tenda & Kuis Sirah",
+                story: "Sore hari tiba! Kalian sampai di bumi perkemahan. Angin mulai bertiup kencang. Sambil mendirikan tenda, Kakak Pembina mengajak kalian mengingat keteladanan Nabi Muhammad saw. saat menghadapi rintangan berat.",
+                choices: [
+                    {
+                        label: "A",
+                        text: "Bekerja sama membagi tugas: ada yang pasang pasak, ada yang merapikan matras.",
+                        effects: { energi: -10, bekal: 0, kompak: +20 },
+                        feedback: "Seperti persaudaraan kaum Muhajirin dan Anshar yang saling membantu, tenda berdiri kokoh dalam waktu singkat!"
+                    },
+                    {
+                        label: "B",
+                        text: "Buru-buru mendirikan tenda asal jadi supaya bisa cepat bermain.",
+                        effects: { energi: -5, bekal: -10, kompak: -15 },
+                        feedback: "Tenda yang kurang kuat tertiup angin kencang hingga hampir roboh dan menimpa kotak bekal! Tanggung jawab harus didahulukan."
+                    },
+                    {
+                        label: "C",
+                        text: "Memilih lokasi tenda yang rata, jauh dari pohon rapuh, dan berdoa bersama.",
+                        effects: { energi: -10, bekal: 0, kompak: +15 },
+                        feedback: "Teliti dan tawakal! Memilih tempat aman menunjukkan kepedulian pada keselamatan seluruh anggota kemah."
+                    },
+                    {
+                        label: "D",
+                        text: "Menyuruh dua orang saja yang bekerja sementara yang lain duduk santai.",
+                        effects: { energi: -15, bekal: 0, kompak: -25 },
+                        feedback: "Tugas berat yang dikerjakan sendirian membuat dua temanmu kelelahan dan kecewa. Kemah butuh gotong royong!"
+                    }
+                ]
+            },
+            {
+                id: 6,
+                emoji: "🍲🔥🗑️",
+                title: "Babak 6: Makan Malam & Sampah Plastik",
+                story: "Setelah makan malam hangat bersama, terkumpul cukup banyak bungkus plastik makanan dan sisa kulit buah. Tidak ada tempat sampah di area hutan lindung ini.",
+                choices: [
+                    {
+                        label: "A",
+                        text: "Membakar semua sampah plastik di api unggun agar cepat hilang.",
+                        effects: { energi: 0, bekal: 0, kompak: -15 },
+                        feedback: "Membakar plastik menghasilkan asap beracun yang mencemari udara hutan dan berbahaya bagi pernapasan kita!"
+                    },
+                    {
+                        label: "B",
+                        text: "Mengubur sampah plastik di bawah tanah dekat semak-semak.",
+                        effects: { energi: -10, bekal: 0, kompak: -10 },
+                        feedback: "Plastik butuh ratusan tahun untuk terurai dan bisa merusak kesuburan tanah hutan lindung."
+                    },
+                    {
+                        label: "C",
+                        text: "Memilah sampah: menyimpan plastik di kantong khusus untuk dibawa pulang.",
+                        effects: { energi: -5, bekal: -5, kompak: +20 },
+                        feedback: "Sikap pecinta lingkungan sejati! Prinsip 'Bawa Pulang Sampahmu' menjaga hutan tetap bersih dan asri."
+                    },
+                    {
+                        label: "D",
+                        text: "Membiarkannya di pinggir tenda karena besok pagi petugas pasti membersihkan.",
+                        effects: { energi: 0, bekal: -10, kompak: -20 },
+                        feedback: "Sampah yang ditinggal sembarangan bisa dimakan hewan liar dan membuat mereka sakit. Kita harus bertanggung jawab atas sampah sendiri."
+                    }
+                ]
+            },
+            {
+                id: 7,
+                emoji: "🌧️⚡🔦",
+                title: "Babak 7: Hujan Deras di Malam Hari",
+                story: "Tengah malam, hujan turun sangat deras disertai angin dingin. Ternyata sisi kiri tenda mulai sedikit rembes air hujan, dan beberapa teman mulai kedinginan.",
+                choices: [
+                    {
+                        label: "A",
+                        text: "Menggeser barang ke tengah, melapisi bagian bocor dengan jas hujan, dan berbagi selimut.",
+                        effects: { energi: -10, bekal: -5, kompak: +20 },
+                        feedback: "Ketenangan dan kepedulianmu menyelamatkan malam ini! Semua tetap hangat dan barang-barang aman dari air."
+                    },
+                    {
+                        label: "B",
+                        text: "Panik dan berlari keluar tenda di tengah hujan deras mencari pos penjaga.",
+                        effects: { energi: -25, bekal: -15, kompak: -20 },
+                        feedback: "Berlari di hutan gelap saat hujan sangat berisiko dan membuat seluruh tubuh basah kuyup kedinginan."
+                    },
+                    {
+                        label: "C",
+                        text: "Membuat saluran parit kecil di sekitar tenda agar air hujan mengalir lancar.",
+                        effects: { energi: -15, bekal: 0, kompak: +15 },
+                        feedback: "Pengetahuan pramuka yang hebat! Air hujan mengalir menjauhi tenda sehingga bagian dalam tetap kering."
+                    },
+                    {
+                        label: "D",
+                        text: "Berebut tempat paling kering di tengah tenda tanpa memedulikan teman lain.",
+                        effects: { energi: -10, bekal: -5, kompak: -25 },
+                        feedback: "Sikap egois saat keadaan darurat merusak persahabatan. Kesulitan seharusnya dihadapi bersama-sama."
+                    }
+                ]
+            },
+            {
+                id: 8,
+                emoji: "🌅🦌🏅",
+                title: "Babak 8: Pagi Cerah & Perjalanan Pulang",
+                story: "Pagi yang cerah menyambut! Sebelum pulang, kalian melihat seekor anak rusa terjebak tali rafia bekas pengunjung lain di semak dekat mata air. Apa tindakan terakhir regumu?",
+                choices: [
+                    {
+                        label: "A",
+                        text: "Mendekat pelan-pelan dengan tenang dan memotong tali rafia menggunakan gunting P3K.",
+                        effects: { energi: -10, bekal: -5, kompak: +25 },
+                        feedback: "Mulia sekali! Anak rusa berlari bebas kembali ke induknya. Menyayangi makhluk hidup adalah akhlak terpuji yang diajarkan agama."
+                    },
+                    {
+                        label: "B",
+                        text: "Mengabaikannya karena takut terlambat sampai di bus penjemputan.",
+                        effects: { energi: 0, bekal: 0, kompak: -20 },
+                        feedback: "Membiarkan hewan kesusahan padahal kita mampu menolongnya meninggalkan rasa penyesalan di hati regu."
+                    },
+                    {
+                        label: "C",
+                        text: "Melaporkan lokasi anak rusa kepada petugas hutan yang berpatroli tidak jauh dari sana.",
+                        effects: { energi: -5, bekal: 0, kompak: +15 },
+                        feedback: "Tindakan tepat dan aman! Petugas hutan segera menolong anak rusa tersebut dengan peralatan lengkap."
+                    },
+                    {
+                        label: "D",
+                        text: "Mengejar anak rusa ramai-ramai sambil berteriak agar talinya lepas sendiri.",
+                        effects: { energi: -15, bekal: 0, kompak: -15 },
+                        feedback: "Mengejar dengan berteriak justru membuat anak rusa panik dan talinya semakin melilit."
+                    }
+                ]
+            }
+        ];
+
+        // ==========================================
+        // DATA 30 SOAL PAI SIRAH NABI MUHAMMAD SAW
+        // ==========================================
+        const paiQuestions = [
+            { q: "Dalam perintah berdakwah secara terang-terangan, Nabi Muhammad saw. diminta untuk menyampaikan dakwah kepada …", opts: ["seluruh pemimpin di luar Makkah", "kerabat terdekat", "penduduk Madinah", "kaum Quraisy di pasar"], ans: 1 },
+            { q: "Sikap Abu Lahab terhadap dakwah Nabi menunjukkan bahwa ia …", opts: ["menerima ajaran Islam secara diam-diam", "menolak dakwah dan berusaha menghalangi Nabi", "melindungi Nabi dari gangguan Quraisy", "meminta Nabi berdakwah hanya kepada keluarganya"], ans: 1 },
+            { q: "Setelah mendapat perintah berdakwah terang-terangan, Nabi mengumpulkan kaum Quraisy di …", opts: ["Bukit Safa", "Gua Hira", "Masjidil Haram", "rumah Abu Thalib"], ans: 0 },
+            { q: "Ketika Nabi bertanya apakah mereka akan percaya jika diberi tahu ada pasukan di balik bukit, kaum Quraisy menjawab bahwa Nabi …", opts: ["dikenal sebagai orang yang jujur", "adalah pemimpin pasukan yang hebat", "selalu membela kaum miskin", "memiliki banyak pengikut"], ans: 0 },
+            { q: "Mengapa Abu Lahab menentang dakwah Nabi dengan keras?", opts: ["Ia takut kehilangan pengaruh dan kedudukan di tengah masyarakat", "Ia ingin memimpin dakwah menggantikan Nabi", "Ia tidak mengenal Nabi sejak kecil", "Ia ingin kaum Quraisy pindah ke Madinah"], ans: 0 },
+            { q: "Salah satu bentuk tekanan kaum musyrik terhadap kaum muslimin yang disebutkan dalam materi adalah …", opts: ["mengajak mereka berdagang ke Syam", "menyiksa dan menghalangi mereka menjalankan agama", "membangun rumah untuk para sahabat", "meminta mereka memimpin Makkah"], ans: 1 },
+            { q: "Mengapa sebagian kaum muslimin hijrah ke Habasyah?", opts: ["Untuk mencari tempat yang aman dari tekanan kaum Quraisy", "Untuk berdagang dan menjadi pemimpin di sana", "Untuk menjauhi ajaran Islam", "Untuk mengumpulkan pasukan melawan Makkah"], ans: 0 },
+            { q: "Alasan Habasyah dipilih sebagai tempat hijrah adalah karena di sana terdapat raja yang …", opts: ["melarang semua agama selain Islam", "dikenal adil dan tidak membiarkan orang dizalimi", "memiliki hubungan keluarga dengan Abu Lahab", "meminta kaum muslimin menyerang Quraisy"], ans: 1 },
+            { q: "Pada hijrah pertama ke Habasyah, rombongan kaum muslimin terdiri atas …", opts: ["12 laki-laki dan 4 perempuan", "2 laki-laki dan 12 perempuan", "40 laki-laki dan 20 perempuan", "70 laki-laki dan 12 perempuan"], ans: 0 },
+            { q: "Misi rombongan yang datang untuk meminta Raja Habasyah menyerahkan kaum muslimin adalah …", opts: ["mengajak Raja Habasyah berdagang dengan Makkah", "membujuk raja agar memulangkan kaum muslimin ke Makkah", "meminta izin untuk menetap bersama kaum muslimin", "mengajak kaum muslimin pindah ke Madinah"], ans: 1 },
+            { q: "Penjelasan Ja’far bin Abi Thalib di hadapan Raja Habasyah terutama menggambarkan bahwa Islam …", opts: ["mengajarkan penyembahan berhala", "memperbaiki kehidupan dan akhlak manusia", "hanya mengatur cara berdagang", "mewajibkan umatnya meninggalkan keluarga"], ans: 1 },
+            { q: "Paman Nabi yang memeluk Islam setelah mendengar bacaan Surah Al-‘Alaq adalah …", opts: ["Abu Lahab", "Hamzah bin Abdul Muthalib", "Abu Jahal", "Abbas bin Abdul Muthalib"], ans: 1 },
+            { q: "Peristiwa masuk Islamnya Hamzah memiliki pengaruh terhadap kaum muslimin karena …", opts: ["kaum Quraisy langsung meninggalkan Makkah", "kaum muslimin menjadi lebih berani dan kuat", "Raja Habasyah memerintahkan Nabi pulang", "seluruh keluarga Abu Lahab menerima Islam"], ans: 1 },
+            { q: "Umar bin Khattab akhirnya masuk Islam setelah …", opts: ["mendengar bacaan Al-Qur’an yang menyentuh hatinya", "mendapat hadiah dari kaum Quraisy", "mengikuti rombongan hijrah ke Habasyah", "diperintah oleh Abu Lahab"], ans: 0 },
+            { q: "Salah satu perubahan sikap Umar setelah memeluk Islam adalah …", opts: ["ia menyembunyikan keislamannya selamanya", "ia menyatakan keislamannya secara terbuka", "ia meminta kaum muslimin meninggalkan Makkah", "ia berhenti membela Nabi"], ans: 1 },
+            { q: "Tujuan kaum Quraisy memboikot Bani Hasyim dan kaum muslimin adalah …", opts: ["mendorong mereka agar menghentikan perlindungan kepada Nabi", "membantu mereka memperoleh tempat tinggal baru", "mengajak mereka ikut berdagang", "memberi mereka kesempatan memimpin Makkah"], ans: 0 },
+            { q: "Bentuk boikot yang dilakukan kaum Quraisy mencakup larangan untuk …", opts: ["belajar membaca dan menulis", "menikah, berjual beli, dan bergaul dengan kelompok yang diboikot", "bepergian ke Habasyah", "mengikuti kegiatan di Masjidil Haram"], ans: 1 },
+            { q: "Siapakah yang mengajak kaum Quraisy mengakhiri pemboikotan terhadap Bani Hasyim?", opts: ["Abu Jahal", "Zuhair bin Abi Umayyah", "Abu Lahab", "Bilal bin Rabah"], ans: 1 },
+            { q: "Peristiwa apa yang membuat isi perjanjian pemboikotan tidak lagi berlaku?", opts: ["Perjanjian itu dibakar oleh Raja Habasyah", "Naskah perjanjian dimakan rayap, kecuali tulisan nama Allah", "Abu Lahab mengakui bahwa perjanjian itu salah", "Kaum muslimin berhasil mengalahkan kaum Quraisy"], ans: 1 },
+            { q: "Mengapa tahun wafatnya Khadijah dan Abu Thalib disebut tahun kesedihan?", opts: ["Karena Nabi kehilangan dua orang yang sangat mendukung dan melindunginya", "Karena kaum muslimin gagal hijrah ke Habasyah", "Karena seluruh penduduk Makkah meninggalkan Islam", "Karena Nabi tidak dapat berdakwah ke Thaif"], ans: 0 },
+            { q: "Setelah kehilangan Khadijah dan Abu Thalib, Nabi pergi ke Thaif untuk …", opts: ["meminta perlindungan dan menyampaikan dakwah", "mencari harta peninggalan keluarganya", "bertemu Raja Habasyah", "memimpin pasukan kaum Quraisy"], ans: 0 },
+            { q: "Sikap penduduk Thaif terhadap dakwah Nabi adalah …", opts: ["menerima Nabi dengan penuh hormat", "mengusir dan menyakiti Nabi", "mengantar Nabi kembali ke Makkah", "meminta Nabi tinggal sebagai pemimpin mereka"], ans: 1 },
+            { q: "Saat Nabi berada di Thaif dan mendapat perlakuan buruk, beliau …", opts: ["membalas penduduk Thaif dengan kekerasan", "mendoakan mereka agar mendapat petunjuk", "menyerah dan berhenti berdakwah", "meminta penduduk Makkah menyerang Thaif"], ans: 1 },
+            { q: "Dalam perjalanan kembali dari Thaif, Nabi beristirahat di kebun milik …", opts: ["Utbah dan Syaibah", "Abu Lahab dan Abu Jahal", "Abu Bakar dan Umar", "Hamzah dan Abbas"], ans: 0 },
+            { q: "Siapakah yang memberikan anggur kepada Nabi di kebun tersebut?", opts: ["Addas", "Bilal", "Zaid", "Ja’far"], ans: 0 },
+            { q: "Peristiwa Isra Mikraj menunjukkan bahwa Nabi …", opts: ["melakukan perjalanan dari Masjidil Haram ke Masjidil Aqsa, lalu mengalami Mikraj", "berhijrah dari Makkah ke Habasyah bersama kaum muslimin", "pergi ke Thaif untuk meminta bantuan kaum Quraisy", "meninggalkan dakwah setelah mendapat gangguan"], ans: 0 },
+            { q: "Perintah penting yang diterima Nabi dalam peristiwa Isra Mikraj adalah …", opts: ["kewajiban melaksanakan salat lima waktu", "kewajiban berhijrah ke Habasyah", "larangan berdagang di Makkah", "perintah membangun Ka’bah"], ans: 0 },
+            { q: "Masyarakat Yatsrib yang menerima dakwah Nabi dalam peristiwa Baiat Aqabah berasal dari suku …", opts: ["Aus dan Khazraj", "Quraisy dan Tsaqif", "Hasyim dan Umayyah", "Bani Hasyim dan Bani Makhzum"], ans: 0 },
+            { q: "Arti Baiat Aqabah bagi perkembangan dakwah Nabi adalah …", opts: ["kaum Yatsrib menyatakan dukungan dan janji untuk melindungi Nabi", "kaum Quraisy mengakui Nabi sebagai pemimpin Makkah", "Raja Habasyah memerintahkan kaum muslimin kembali", "penduduk Thaif berjanji menerima dakwah Nabi"], ans: 0 },
+            { q: "Peristiwa yang paling jelas menunjukkan perbedaan sikap kaum Quraisy dan penduduk Yatsrib terhadap dakwah Nabi adalah …", opts: ["kaum Quraisy memboikot kaum muslimin, sedangkan penduduk Yatsrib memberi dukungan melalui Baiat Aqabah", "kaum Quraisy mengizinkan hijrah, sedangkan penduduk Yatsrib melarangnya", "kaum Quraisy dan penduduk Yatsrib sama-sama menolak dakwah Nabi", "kaum Quraisy membela Nabi, sedangkan penduduk Yatsrib mengusirnya"], ans: 0 }
+        ];
+
+        // ==========================================
+        // STATE & LOGIKA PERMAINAN UTAMA
+        // ==========================================
+        let stats = { energi: 100, bekal: 100, kompak: 100 };
+        let currentStageIndex = 0;
+        let isAnswered = false;
+        let currentGroupName = "";
+        let timerInterval = null;
+        let elapsedSeconds = 0;
+        let leaderboardData = [];
+
+        function saveLeaderboardStorage() {
+            // Data peringkat tersimpan rapi di memori sesi kelas
+        }
+
+        function setPresetGroup(name) {
+            const input = document.getElementById('input-group-name');
+            input.value = name;
+            clearNameError();
+        }
+
+        function clearNameError() {
+            document.getElementById('name-error-msg').classList.add('hidden');
+            document.getElementById('input-group-name').classList.remove('border-rose-500', 'bg-rose-50');
+        }
+
+        function formatTime(totalSec) {
+            const mins = Math.floor(totalSec / 60);
+            const secs = totalSec % 60;
+            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function formatTimeText(totalSec) {
+            const mins = Math.floor(totalSec / 60);
+            const secs = totalSec % 60;
+            if (mins > 0) return `${mins} mnt ${secs} dtk`;
+            return `${secs} detik`;
+        }
+
+        function startTimer() {
+            stopTimer();
+            elapsedSeconds = 0;
+            document.getElementById('timer-indicator').textContent = "00:00";
+            timerInterval = setInterval(() => {
+                elapsedSeconds++;
+                document.getElementById('timer-indicator').textContent = formatTime(elapsedSeconds);
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        // Referensi Elemen DOM
+        const screens = {
+            start: document.getElementById('screen-start'),
+            game: document.getElementById('screen-game'),
+            gameover: document.getElementById('screen-gameover'),
+            victory: document.getElementById('screen-victory')
+        };
+        const statsBar = document.getElementById('stats-bar');
+
+        function showScreen(screenName) {
+            Object.values(screens).forEach(sec => sec.classList.add('hidden'));
+            screens[screenName].classList.remove('hidden');
+
+            if (screenName === 'game') {
+                statsBar.classList.remove('hidden');
+            } else {
+                statsBar.classList.add('hidden');
+            }
+        }
+
+        function updateStatsUI() {
+            // Batasi nilai antara 0 hingga 100
+            stats.energi = Math.max(0, Math.min(100, stats.energi));
+            stats.bekal = Math.max(0, Math.min(100, stats.bekal));
+            stats.kompak = Math.max(0, Math.min(100, stats.kompak));
+
+            document.getElementById('val-energi').textContent = stats.energi;
+            document.getElementById('bar-energi').style.width = stats.energi + '%';
+
+            document.getElementById('val-bekal').textContent = stats.bekal;
+            document.getElementById('bar-bekal').style.width = stats.bekal + '%';
+
+            document.getElementById('val-kompak').textContent = stats.kompak;
+            document.getElementById('bar-kompak').style.width = stats.kompak + '%';
+
+            // Ubah warna bar jika kritis (<= 25)
+            document.getElementById('bar-energi').className = stats.energi <= 25 ? 'bg-red-500 h-full rounded-full transition-all duration-500' : 'bg-amber-400 h-full rounded-full transition-all duration-500';
+            document.getElementById('bar-bekal').className = stats.bekal <= 25 ? 'bg-red-500 h-full rounded-full transition-all duration-500' : 'bg-sky-400 h-full rounded-full transition-all duration-500';
+            document.getElementById('bar-kompak').className = stats.kompak <= 25 ? 'bg-red-500 h-full rounded-full transition-all duration-500' : 'bg-rose-400 h-full rounded-full transition-all duration-500';
+        }
+
+        function startGame() {
+            const inputEl = document.getElementById('input-group-name');
+            const rawName = inputEl.value.trim();
+
+            if (!rawName) {
+                const errEl = document.getElementById('name-error-msg');
+                errEl.classList.remove('hidden');
+                inputEl.classList.add('border-rose-500', 'bg-rose-50');
+                inputEl.focus();
+                return;
+            }
+
+            currentGroupName = rawName;
+            document.getElementById('header-group-name').textContent = currentGroupName;
+
+            stats = { energi: 100, bekal: 100, kompak: 100 };
+            currentStageIndex = 0;
+            updateStatsUI();
+            showScreen('game');
+            startTimer();
+            renderStage();
+        }
+
+        function restartSameGroup() {
+            document.getElementById('input-group-name').value = currentGroupName;
+            startGame();
+        }
+
+        function backToStart() {
+            stopTimer();
+            document.getElementById('input-group-name').value = '';
+            clearNameError();
+            showScreen('start');
+        }
+
+        function renderStage() {
+            isAnswered = false;
+            const stage = gameStages[currentStageIndex];
+
+            document.getElementById('stage-indicator').textContent = `${currentStageIndex + 1} / ${gameStages.length}`;
+            document.getElementById('scene-emoji').textContent = stage.emoji;
+            document.getElementById('scene-title').textContent = stage.title;
+            document.getElementById('scene-story').textContent = stage.story;
+
+            // Sembunyikan kotak umpan balik
+            document.getElementById('feedback-box').classList.add('hidden');
+
+            // Render tombol pilihan A, B, C, D
+            const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = '';
+
+            stage.choices.forEach((choice, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "btn-bounce w-full text-left bg-white hover:bg-emerald-50 border-2 border-emerald-300 hover:border-emerald-500 p-3.5 sm:p-4 rounded-2xl shadow-sm transition flex items-start gap-3 cursor-pointer";
+                btn.innerHTML = `
+                    <span class="bg-emerald-600 text-white font-bold w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 text-base sm:text-lg shadow-sm">
+                        ${choice.label}
+                    </span>
+                    <span class="text-base sm:text-lg font-medium text-slate-800 leading-snug pt-0.5">
+                        ${choice.text}
+                    </span>
+                `;
+                btn.onclick = () => selectChoice(idx, btn);
+                choicesContainer.appendChild(btn);
+            });
+        }
+
+        function selectChoice(choiceIdx, selectedBtn) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const stage = gameStages[currentStageIndex];
+            const choice = stage.choices[choiceIdx];
+
+            // Tandai tombol yang dipilih dan nonaktifkan lainnya
+            const allButtons = document.getElementById('choices-container').querySelectorAll('button');
+            allButtons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === choiceIdx) {
+                    btn.classList.remove('bg-white', 'border-emerald-300');
+                    btn.classList.add('bg-emerald-100', 'border-emerald-600', 'ring-2', 'ring-emerald-400');
+                } else {
+                    btn.classList.add('opacity-50');
+                }
+            });
+
+            // Terapkan perubahan status
+            stats.energi += choice.effects.energi;
+            stats.bekal += choice.effects.bekal;
+            stats.kompak += choice.effects.kompak;
+            updateStatsUI();
+
+            // Tampilkan umpan balik konsekuensi logis & moral
+            const feedbackBox = document.getElementById('feedback-box');
+            document.getElementById('feedback-text').textContent = choice.feedback;
+
+            // Buat badge efek statistik
+            const statChangesDiv = document.getElementById('stat-changes');
+            statChangesDiv.innerHTML = '';
+
+            const effectsList = [
+                { name: '⚡ Energi', val: choice.effects.energi },
+                { name: '🎒 Bekal', val: choice.effects.bekal },
+                { name: '🤝 Kompak', val: choice.effects.kompak }
+            ];
+
+            effectsList.forEach(item => {
+                if (item.val !== 0) {
+                    const badge = document.createElement('span');
+                    const isPos = item.val > 0;
+                    badge.className = isPos
+                        ? 'bg-emerald-200 text-emerald-900 px-3 py-1 rounded-full'
+                        : 'bg-rose-200 text-rose-900 px-3 py-1 rounded-full';
+                    badge.textContent = `${item.name}: ${isPos ? '+' + item.val : item.val}`;
+                    statChangesDiv.appendChild(badge);
+                }
+            });
+
+            // Ubah teks tombol Lanjut jika ini babak terakhir atau ada yang 0
+            const btnNext = document.getElementById('btn-next');
+            if (stats.energi <= 0 || stats.bekal <= 0 || stats.kompak <= 0) {
+                btnNext.textContent = "Lihat Kondisi Regu ⚠️";
+                btnNext.className = "btn-bounce w-full mt-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-lg py-3.5 px-6 rounded-2xl shadow-md border-b-4 border-rose-800 transition cursor-pointer";
+            } else if (currentStageIndex === gameStages.length - 1) {
+                btnNext.textContent = "Selesaikan Ekspedisi 🏆";
+                btnNext.className = "btn-bounce w-full mt-2 bg-amber-500 hover:bg-amber-400 text-white font-bold text-lg py-3.5 px-6 rounded-2xl shadow-md border-b-4 border-amber-700 transition cursor-pointer";
+            } else {
+                btnNext.textContent = "Lanjut ke Babak Berikutnya ➡️";
+                btnNext.className = "btn-bounce w-full mt-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-lg py-3.5 px-6 rounded-2xl shadow-md border-b-4 border-emerald-800 transition cursor-pointer";
+            }
+
+            feedbackBox.classList.remove('hidden');
+            feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function nextStage() {
+            // Cek kondisi kalah (salah satu status menyentuh 0)
+            if (stats.energi <= 0 || stats.bekal <= 0 || stats.kompak <= 0) {
+                triggerGameOver();
+                return;
+            }
+
+            // Lanjut ke babak berikutnya atau menang
+            currentStageIndex++;
+            if (currentStageIndex < gameStages.length) {
+                renderStage();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                triggerVictory();
+            }
+        }
+
+        function triggerGameOver() {
+            stopTimer();
+            showScreen('gameover');
+            document.getElementById('gameover-group-badge').textContent = `🚩 Kelompok: ${currentGroupName} • ⏱️ Waktu: ${formatTimeText(elapsedSeconds)}`;
+            const titleEl = document.getElementById('gameover-title');
+            const reasonEl = document.getElementById('gameover-reason');
+
+            if (stats.energi <= 0) {
+                titleEl.textContent = "⚡ Energi Regu Habis!";
+                reasonEl.textContent = "Anggota regu terlalu kelelahan untuk melanjutkan perjalanan. Ingat ya, kita perlu mengatur tenaga dan beristirahat dengan cukup saat berkemah!";
+            } else if (stats.bekal <= 0) {
+                titleEl.textContent = "🎒 Bekal Makanan & Alat Habis!";
+                reasonEl.textContent = "Persediaan makanan dan perlengkapan regu habis di tengah jalan sehingga tim harus segera kembali ke pos utama demi keselamatan.";
+            } else {
+                titleEl.textContent = "🤝 Kekompakan Tim Runtuh!";
+                reasonEl.textContent = "Terlalu banyak pertengkaran dan sikap egois membuat regu tidak bisa bekerja sama lagi. Di alam bebas, kekompakan adalah kekuatan terbesar!";
+            }
+        }
+
+        function triggerVictory() {
+            stopTimer();
+            showScreen('victory');
+            const totalScore = stats.energi + stats.bekal + stats.kompak;
+
+            document.getElementById('victory-group-name').textContent = `🚩 ${currentGroupName}`;
+            document.getElementById('end-energi').textContent = stats.energi;
+            document.getElementById('end-bekal').textContent = stats.bekal;
+            document.getElementById('end-kompak').textContent = stats.kompak;
+            document.getElementById('end-total').textContent = totalScore;
+            document.getElementById('end-time').textContent = formatTime(elapsedSeconds);
+
+            const rankEl = document.getElementById('victory-rank');
+            const descEl = document.getElementById('victory-desc');
+            const emojiEl = document.getElementById('victory-emoji');
+            let rankTitle = "";
+
+            if (totalScore >= 240) {
+                emojiEl.textContent = "👑🏆🌟";
+                rankTitle = "Petualang Legendaris!";
+                descEl.textContent = "Sempurna! Kamu adalah pemimpin yang sangat bijaksana, peduli lingkungan, hemat bekal, dan selalu menjaga kekompakan tim!";
+            } else if (totalScore >= 160) {
+                emojiEl.textContent = "🧭🌲🎖️";
+                rankTitle = "Penjelajah Tangguh!";
+                descEl.textContent = "Hebat sekali! Kamu berhasil melewati berbagai rintangan di hutan lindung dengan penuh tanggung jawab dan kerja sama yang baik.";
+            } else {
+                emojiEl.textContent = "⛺🌱👍";
+                rankTitle = "Pemula Pemberani!";
+                descEl.textContent = "Selamat! Meskipun sempat menghadapi tantangan berat, kamu pantang menyerah dan berhasil membawa regumu pulang dengan selamat.";
+            }
+            rankEl.textContent = rankTitle;
+
+            // Simpan hasil ke Papan Peringkat
+            const newRecord = {
+                id: Date.now(),
+                groupName: currentGroupName,
+                totalScore: totalScore,
+                timeSeconds: elapsedSeconds,
+                rankTitle: rankTitle.replace('!', '')
+            };
+            leaderboardData.push(newRecord);
+
+            // Urutkan: 1. Nilai tertinggi (descending), 2. Waktu tercepat (ascending)
+            leaderboardData.sort((a, b) => {
+                if (b.totalScore !== a.totalScore) {
+                    return b.totalScore - a.totalScore;
+                }
+                return a.timeSeconds - b.timeSeconds;
+            });
+
+            saveLeaderboardStorage();
+            renderLeaderboardList('victory-leaderboard-list', newRecord.id);
+        }
+
+        function renderLeaderboardList(containerId, highlightId = null) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (leaderboardData.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-6 text-slate-500 text-sm sm:text-base">
+                        Belum ada kelompok yang menyelesaikan ekspedisi.<br>Ayo jadi kelompok pertama yang mencatat rekor! 🏕️
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            leaderboardData.forEach((entry, index) => {
+                const pos = index + 1;
+                let medal = `<span class="font-bold text-slate-600">#${pos}</span>`;
+                let cardStyle = "bg-white border-slate-200";
+
+                if (pos === 1) {
+                    medal = "🥇";
+                    cardStyle = "bg-amber-100/90 border-amber-400";
+                } else if (pos === 2) {
+                    medal = "🥈";
+                    cardStyle = "bg-slate-100 border-slate-300";
+                } else if (pos === 3) {
+                    medal = "🥉";
+                    cardStyle = "bg-orange-50 border-orange-300";
+                }
+
+                const isCurrent = entry.id === highlightId;
+                const highlightRing = isCurrent ? "ring-2 ring-emerald-500" : "";
+
+                const row = document.createElement('div');
+                row.className = `flex items-center justify-between p-2.5 sm:p-3 rounded-2xl border-2 ${cardStyle} ${highlightRing} gap-2`;
+                row.innerHTML = `
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="text-xl sm:text-2xl w-7 text-center shrink-0">${medal}</div>
+                        <div class="min-w-0">
+                            <div class="font-bold text-slate-800 text-sm sm:text-base truncate">
+                                ${entry.groupName} ${isCurrent ? '<span class="text-xs bg-emerald-600 text-white px-2 py-0.5 rounded-full ml-1">Baru</span>' : ''}
+                            </div>
+                            <div class="text-xs text-slate-500 font-medium">${entry.rankTitle}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0 text-right">
+                        <div class="bg-emerald-600 text-white text-xs sm:text-sm font-bold px-2.5 py-1 rounded-xl">
+                            ⭐ ${entry.totalScore}
+                        </div>
+                        <div class="bg-sky-100 text-sky-900 border border-sky-300 text-xs sm:text-sm font-bold px-2.5 py-1 rounded-xl font-mono">
+                            ⏱️ ${formatTime(entry.timeSeconds)}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function openLeaderboardModal() {
+            resetConfirmUI();
+            renderLeaderboardList('modal-leaderboard-list');
+            document.getElementById('leaderboard-modal').classList.remove('hidden');
+        }
+
+        function closeLeaderboardModal() {
+            document.getElementById('leaderboard-modal').classList.add('hidden');
+        }
+
+        function askResetLeaderboard() {
+            if (leaderboardData.length === 0) return;
+            document.getElementById('reset-confirm-area').innerHTML = `
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-rose-700">Yakin hapus semua?</span>
+                    <button onclick="confirmResetLeaderboard()" class="bg-rose-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg cursor-pointer">Ya, Hapus</button>
+                    <button onclick="resetConfirmUI()" class="bg-slate-200 text-slate-700 text-xs font-bold px-2.5 py-1.5 rounded-lg cursor-pointer">Batal</button>
+                </div>
+            `;
+        }
+
+        function resetConfirmUI() {
+            document.getElementById('reset-confirm-area').innerHTML = `
+                <button onclick="askResetLeaderboard()" class="text-rose-600 hover:text-rose-800 font-bold text-xs sm:text-sm px-3 py-2 rounded-xl hover:bg-rose-50 transition cursor-pointer">
+                    🗑️ Hapus Riwayat Nilai
+                </button>
+            `;
+        }
+
+        function confirmResetLeaderboard() {
+            leaderboardData = [];
+            saveLeaderboardStorage();
+            resetConfirmUI();
+            renderLeaderboardList('modal-leaderboard-list');
+            renderLeaderboardList('victory-leaderboard-list');
+        }
+
+        // ==========================================
+        // LOGIKA MODAL KUIS PAI SIRAH NABI (30 SOAL)
+        // ==========================================
+        let currentQuizIdx = 0;
+        let quizScore = 0;
+        let quizAnswered = false;
+
+        function openQuizModal() {
+            document.getElementById('quiz-modal').classList.remove('hidden');
+            renderQuizQuestion();
+        }
+
+        function closeQuizModal() {
+            document.getElementById('quiz-modal').classList.add('hidden');
+        }
+
+        function resetQuiz() {
+            currentQuizIdx = 0;
+            quizScore = 0;
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            quizAnswered = false;
+            const item = paiQuestions[currentQuizIdx];
+            const labels = ['A', 'B', 'C', 'D'];
+
+            document.getElementById('quiz-progress-text').textContent = `Soal ${currentQuizIdx + 1} dari ${paiQuestions.length} • Benar: ${quizScore}`;
+            document.getElementById('quiz-number-badge').textContent = `Pertanyaan #${currentQuizIdx + 1}`;
+            document.getElementById('quiz-question').textContent = item.q;
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            const optsContainer = document.getElementById('quiz-options');
+            optsContainer.innerHTML = '';
+
+            item.opts.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left bg-white hover:bg-amber-50 border-2 border-slate-300 hover:border-amber-400 p-3.5 rounded-2xl font-medium text-base sm:text-lg text-slate-800 flex items-start gap-3 transition cursor-pointer";
+                btn.innerHTML = `
+                    <span class="bg-amber-500 text-white font-bold w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
+                        ${labels[idx]}
+                    </span>
+                    <span class="pt-0.5">${optText}</span>
+                `;
+                btn.onclick = () => checkQuizAnswer(idx, btn);
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(selectedIdx, btnClicked) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const item = paiQuestions[currentQuizIdx];
+            const isCorrect = selectedIdx === item.ans;
+            const allBtns = document.getElementById('quiz-options').querySelectorAll('button');
+            const labels = ['A', 'B', 'C', 'D'];
+
+            allBtns.forEach((b, idx) => {
+                b.disabled = true;
+                if (idx === item.ans) {
+                    b.classList.remove('border-slate-300');
+                    b.classList.add('bg-emerald-100', 'border-emerald-600', 'text-emerald-950');
+                } else if (idx === selectedIdx && !isCorrect) {
+                    b.classList.remove('border-slate-300');
+                    b.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-950');
+                } else {
+                    b.classList.add('opacity-60');
+                }
+            });
+
+            const fb = document.getElementById('quiz-feedback');
+            fb.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-rose-100', 'text-rose-900');
+
+            if (isCorrect) {
+                quizScore++;
+                fb.classList.add('bg-emerald-100', 'text-emerald-900');
+                fb.innerHTML = `✅ <strong>MasyaAllah, Benar!</strong> Jawaban yang tepat adalah <strong>${labels[item.ans]}. ${item.opts[item.ans]}</strong>.`;
+            } else {
+                fb.classList.add('bg-rose-100', 'text-rose-900');
+                fb.innerHTML = `❌ <strong>Belum tepat.</strong> Jawaban yang benar adalah <strong>${labels[item.ans]}. ${item.opts[item.ans]}</strong>.`;
+            }
+
+            document.getElementById('quiz-progress-text').textContent = `Soal ${currentQuizIdx + 1} dari ${paiQuestions.length} • Benar: ${quizScore}`;
+
+            const nextBtn = document.getElementById('quiz-next-btn');
+            nextBtn.classList.remove('hidden');
+            if (currentQuizIdx === paiQuestions.length - 1) {
+                nextBtn.textContent = "Lihat Nilai Akhir 🏆";
+            } else {
+                nextBtn.textContent = "Soal Berikutnya ➡️";
+            }
+        }
+
+        function nextQuizQuestion() {
+            if (currentQuizIdx < paiQuestions.length - 1) {
+                currentQuizIdx++;
+                renderQuizQuestion();
+            } else {
+                const finalGrade = Math.round((quizScore / paiQuestions.length) * 100);
+                document.getElementById('quiz-number-badge').textContent = "HASIL AKHIR KUIS PAI";
+                document.getElementById('quiz-question').innerHTML = `
+                    Alhamdulillah! Kamu telah menyelesaikan semua 30 soal Sirah Nabi Muhammad saw.<br><br>
+                    <span class="text-2xl text-emerald-700">Benar: ${quizScore} / 30 (Nilai: ${finalGrade})</span>
+                `;
+                document.getElementById('quiz-options').innerHTML = '';
+                document.getElementById('quiz-feedback').classList.add('hidden');
+                document.getElementById('quiz-next-btn').classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
